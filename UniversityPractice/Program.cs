@@ -18,10 +18,10 @@ namespace ListPractice
     /// </summary>
     internal class Program
     {
-        public static void DisplayOptionsForList(int choice)
+        public static void DisplayAndChooseOptionsForList(int chosenList)
         {
             Console.Clear();
-            Console.WriteLine($"Выбран список {choice}");
+            Console.WriteLine($"Выбран список {chosenList}");
             Console.WriteLine("Выбери операцию со списом:");
             Console.WriteLine("1. Добавление элементов в список");
             Console.WriteLine("2. Удаление эелементов из списка");
@@ -36,7 +36,9 @@ namespace ListPractice
         {
             Console.Clear();
             Console.WriteLine("Выбрано добавление элементов");
-            Console.WriteLine("Добавляй элементы по одному! :)");
+            Console.WriteLine("Текущие элементы списка:");
+            OutputElementsOfList(list);
+            Console.WriteLine("\nДобавляй элементы по одному! :)");
             Console.WriteLine("Чтобы завершить ввод нажми Enter");
 
             while (true)
@@ -47,13 +49,100 @@ namespace ListPractice
                 list.Add(elementInput);
             }
         }
+        public static void RemoveElementsFromList(List<object> list)
+        {
+            int choice = 0;
+            Console.Clear();
+            if (list.Count == 0)
+            {
+                Console.WriteLine("Список пуст");
+                return;
+            }
+            Console.WriteLine($"Элементы списка {list}:");
+            OutputElementsOfList(list);
+            Console.WriteLine("\nВыберите способ удаления элементов: ");
+            Console.WriteLine("1. Удалить элемент в конце списка");
+            Console.WriteLine("2. Удалить элемент по индексу");
+            Console.WriteLine("3. Удалить все элементы");
+
+            try
+            {
+                choice = int.Parse(Console.ReadLine());
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Ошибка ввода");
+            }
+            switch (choice)
+            {
+                case 1:
+                    try
+                    {
+                        list.RemoveAt(list.Count - 1);
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        Console.WriteLine("Список пуст. Удалять нечего");
+                        break;
+                    }
+                    Console.WriteLine("Элемент удален");
+                    break;
+                case 2:
+                    int index;
+                    Console.WriteLine("Выбрано удаление элемента по индексу");
+                    Console.WriteLine("Введи индекс удаляемого элемента");
+                    try
+                    {
+                        index = int.Parse(Console.ReadLine());
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("Ошибка ввода!");
+                        break;
+                    }
+
+                    try
+                    {
+                        list.RemoveAt(index);
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        Console.WriteLine("Индекс за пределами списка!");
+                        break;
+                    }
+                    catch (ArgumentException)
+                    {
+                        Console.WriteLine("Неправильный формат индекса! Ожидалось целое число");
+                        break;
+                    }
+                    Console.WriteLine($"Элемент под индексом {index} удален");
+                    break;
+                case 3:
+                    list.Clear();
+                    Console.WriteLine("Все элементы списка удалены");
+                    break;
+
+                    
+                default:
+                    Console.Clear();
+                    Console.WriteLine("Такой функции нет!");
+                    break;
+            }
+        }
         public static void OutputElementsOfList(List<object> list)
         {
             Console.Clear();
-            Console.WriteLine("Элементы списка:");
-            foreach (var item in list)
+            if (list.Count == 0)
             {
-                Console.Write(item + " ");
+                Console.WriteLine("Список пуст");
+            }
+            else
+            {
+                Console.WriteLine("Элементы списка:");
+                foreach (var item in list)
+                {
+                    Console.Write(item + " ");
+                }
             }
         }
         static void Main(string[] args)
@@ -79,7 +168,7 @@ namespace ListPractice
                 {
                     case 1:
                         Console.WriteLine("Выбран список 1\n");
-                        DisplayOptionsForList(listInput);
+                        DisplayAndChooseOptionsForList(listInput);
                         try
                         {
                             optionsInput = int.Parse(Console.ReadLine());
@@ -89,7 +178,6 @@ namespace ListPractice
                             Console.WriteLine("Ошибка ввода!");
                             break;
                         }
-
                         
 
                         switch (optionsInput)
@@ -98,7 +186,7 @@ namespace ListPractice
                                 AddElementsToList(firstList);
                                 break;
                             case 2:
-
+                                RemoveElementsFromList(firstList);
                                 break;
                             case 3:
 
@@ -123,9 +211,47 @@ namespace ListPractice
                         }
                         break;
                     case 2:
-                        Console.Clear();
-                        Console.WriteLine("Выбран список 2\n");
-                        DisplayOptionsForList(listInput);
+                        DisplayAndChooseOptionsForList(listInput);
+
+                        try
+                        {
+                            optionsInput = int.Parse(Console.ReadLine());
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Ошибка ввода!");
+                            break;
+                        }
+
+                        switch (optionsInput)
+                        {
+                            case 1:
+                                AddElementsToList(secondList);
+                                break;
+                            case 2:
+                                RemoveElementsFromList(secondList);
+                                break;
+                            case 3:
+
+                                break;
+                            case 4:
+
+                                break;
+                            case 5:
+
+                                break;
+                            case 6:
+
+                                break;
+                            case 7:
+                                OutputElementsOfList(secondList);
+                                break;
+
+                            default:
+                                Console.Clear();
+                                Console.WriteLine("Такой операции нет!");
+                                break;
+                        }
                         break;
                     default:
                         Console.Clear();
