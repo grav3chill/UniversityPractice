@@ -1,4 +1,5 @@
 ﻿using System.Runtime.ExceptionServices;
+using System.Runtime.Serialization;
 
 namespace ListPractice
 {
@@ -129,6 +130,55 @@ namespace ListPractice
                     break;
             }
         }
+        public static List<object> SortList(List<object> list)
+        {
+            var sorted = new List<object>();
+            int choice = 0;
+            Console.WriteLine("Выбрана сортировка списка");
+            Console.WriteLine("Исходный список:");
+            OutputElementsOfList(list);
+            Console.WriteLine("\nВыберите тип сортировки:\n1. По возрастанию \n2. По убыванию");
+            try
+            {
+                choice = int.Parse(Console.ReadLine());
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Ошибка ввода");
+            }
+            switch (choice)
+            {
+                case 1:
+                     sorted = list.OrderBy(x => x is int ? 0 : 1)  //Сначала числа (0), потом строки (1)
+                     .ThenBy(x => x is int ? (int)x : 0)  //Сортировка чисел
+                     .ThenBy(x => x is string ? (string)x : "")  //Сортировка строк
+                     .ToList();
+                    Console.WriteLine($"Отсортированный список:");
+                    foreach (var item in list)
+                    {
+                        Console.Write(item + " ");
+                    }
+                    break;
+                case 2:
+                    sorted = list.OrderBy(x => x is int ? 0 : 1)  //Сначала в приоритете числа (0), потом строки (1)
+                     .ThenByDescending(x => x is int ? (int)x : 0)  //Числа по убыванию
+                     .ThenByDescending(x => x is string ? (string)x : "")  //Строки в обратном порядке
+                     .ToList();
+                    Console.WriteLine($"Отсортированный список:");
+                    foreach (var item in list)
+                    {
+                        Console.Write(item + " ");
+                    }
+                    break;
+                default:
+                    Console.Clear();
+                    Console.WriteLine("Такого типа нет!");
+                    break;
+            }
+
+            return sorted;
+        }
+
         public static void OutputElementsOfList(List<object> list)
         {
             Console.Clear();
@@ -189,7 +239,7 @@ namespace ListPractice
                                 RemoveElementsFromList(firstList);
                                 break;
                             case 3:
-
+                                firstList = SortList(firstList);
                                 break;
                             case 4:
 
@@ -232,7 +282,7 @@ namespace ListPractice
                                 RemoveElementsFromList(secondList);
                                 break;
                             case 3:
-
+                                secondList = SortList(secondList);
                                 break;
                             case 4:
 
