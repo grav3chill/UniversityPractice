@@ -1,4 +1,5 @@
-﻿using System.Runtime.ExceptionServices;
+﻿using System;
+using System.Runtime.ExceptionServices;
 using System.Runtime.Serialization;
 
 namespace ListPractice
@@ -130,51 +131,97 @@ namespace ListPractice
                     break;
             }
         }
-        public static List<object> SortList(List<object> list)
+        public static void InsertElementAtIndex(List<object> list)
         {
-            var sorted = new List<object>();
-            int choice = 0;
-            Console.WriteLine("Выбрана сортировка списка");
-            Console.WriteLine("Исходный список:");
-            OutputElementsOfList(list);
-            Console.WriteLine("\nВыберите тип сортировки:\n1. По возрастанию \n2. По убыванию");
+            int index;
+            object insertedItem = 0;
+            Console.Clear();
+            Console.WriteLine("Выбрана вставка элемента по индексу");
+            Console.WriteLine("Введи индекс");
             try
             {
-                choice = int.Parse(Console.ReadLine());
+                index = int.Parse(Console.ReadLine());
             }
             catch (Exception)
             {
-                Console.WriteLine("Ошибка ввода");
+                Console.WriteLine("Ошибка ввода индекса! Ожидалось целое число");
+                return;
             }
-            switch (choice)
+            if (index < 0 || index >= list.Count)
+                throw new ArgumentOutOfRangeException($"Индекс должен быть между 0 и {list.Count}!");
+            Console.WriteLine("Введи элемент для вставки");
+            try
             {
-                case 1:
-                     sorted = list.OrderBy(x => x is int ? 0 : 1)  //Сначала числа (0), потом строки (1)
-                     .ThenBy(x => x is int ? (int)x : 0)  //Сортировка чисел
-                     .ThenBy(x => x is string ? (string)x : "")  //Сортировка строк
-                     .ToList();
-                    Console.WriteLine($"Отсортированный список:");
-                    foreach (var item in list)
-                    {
-                        Console.Write(item + " ");
-                    }
-                    break;
-                case 2:
-                    sorted = list.OrderBy(x => x is int ? 0 : 1)  //Сначала в приоритете числа (0), потом строки (1)
-                     .ThenByDescending(x => x is int ? (int)x : 0)  //Числа по убыванию
-                     .ThenByDescending(x => x is string ? (string)x : "")  //Строки в обратном порядке
-                     .ToList();
-                    Console.WriteLine($"Отсортированный список:");
-                    foreach (var item in list)
-                    {
-                        Console.Write(item + " ");
-                    }
-                    break;
-                default:
-                    Console.Clear();
-                    Console.WriteLine("Такого типа нет!");
-                    break;
+                insertedItem = int.Parse(Console.ReadLine());
             }
+            catch (Exception)
+            {
+                Console.WriteLine("Ошибка ввода!");
+                return;
+            }
+
+            list.Insert(index, insertedItem);
+            Console.WriteLine("Вставка прошла успешно!");
+            foreach (var x in list)
+            {
+                Console.Write(x + " ");
+            }
+
+        }
+        
+        public static List<object> SortList(List<object> list)
+        {
+            Console.WriteLine("Выбрана сортировка списка");
+            Console.WriteLine("Элементы списка:");
+            OutputElementsOfList(list);
+
+            Console.WriteLine("\nВыберите тип сортировки:\n1. По возрастанию\n2. По убыванию");
+
+            if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 1 || choice > 2)
+            {
+                Console.WriteLine("Ошибка ввода или неверный выбор");
+                return list;
+            }
+
+            //Разделяем элементы на числа и строки
+            var numbers = new List<object>();
+            var strings = new List<object>();
+
+            foreach (var item in list)
+            {
+                if (item is IConvertible convertible)
+                {
+                    try
+                    {
+                        Convert.ToDouble(convertible);
+                        numbers.Add(item);
+                        continue;
+                    }
+                    catch { }
+                }
+                strings.Add(item);
+            }
+
+            List<object> sorted;
+            if (choice == 1)
+            {
+                sorted = numbers.OrderBy(x => Convert.ToDouble(x))
+                               .Concat(strings.OrderBy(x => x.ToString()))
+                               .ToList();
+            }
+            else
+            {
+                sorted = numbers.OrderByDescending(x => Convert.ToDouble(x))
+                               .Concat(strings.OrderByDescending(x => x.ToString()))
+                               .ToList();
+            }
+
+            Console.WriteLine("Отсортированный список:");
+            foreach (var item in sorted)
+            {
+                Console.Write(item + " ");
+            }
+            Console.WriteLine();
 
             return sorted;
         }
@@ -242,7 +289,7 @@ namespace ListPractice
                                 firstList = SortList(firstList);
                                 break;
                             case 4:
-
+                                InsertElementAtIndex(firstList);
                                 break;
                             case 5:
 
