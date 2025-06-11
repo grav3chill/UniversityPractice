@@ -33,7 +33,6 @@ namespace ListPractice
             Console.WriteLine("6. Копирование списка в другой список");
             Console.WriteLine("7. Вывод элементов списка");
         }
-
         public static void AddElementsToList(List<object> list)
         {
             Console.Clear();
@@ -168,7 +167,6 @@ namespace ListPractice
             }
 
         }
-        
         public static List<object> SortList(List<object> list)
         {
             Console.WriteLine("Выбрана сортировка списка");
@@ -225,7 +223,51 @@ namespace ListPractice
 
             return sorted;
         }
+        public static void FindElement(List<object> list)
+        {
+            Console.Clear();
+            Console.WriteLine("Выбран поиск элемента в списке");
+            Console.WriteLine("Введи элемент для поиска:");
 
+            string targetItem = Console.ReadLine();
+            if (string.IsNullOrEmpty(targetItem))
+            {
+                Console.WriteLine("Вы ничего не ввели!");
+                return;
+            }
+
+            var indices = new List<int>();
+            bool isNumeric = double.TryParse(targetItem, out double numericValue);
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (isNumeric && list[i] is IConvertible convertible)
+                {
+                    try
+                    {
+                        double listValue = Convert.ToDouble(convertible);
+                        if (Math.Abs(listValue - numericValue) < 0.0001) // учитываем погрешность для double
+                        {
+                            indices.Add(i);
+                        }
+                    }
+                    catch { }
+                }
+                else if (targetItem.Equals(list[i]?.ToString(), StringComparison.Ordinal))
+                {
+                    indices.Add(i);
+                }
+            }
+
+            if (indices.Count == 0)
+            {
+                Console.WriteLine($"Элемент '{targetItem}' отсутствует в списке");
+            }
+            else
+            {
+                Console.WriteLine($"Элемент '{targetItem}' найден под индексами: {string.Join(", ", indices)}");
+            }
+        }
         public static void OutputElementsOfList(List<object> list)
         {
             Console.Clear();
@@ -292,7 +334,7 @@ namespace ListPractice
                                 InsertElementAtIndex(firstList);
                                 break;
                             case 5:
-
+                                FindElement(firstList);
                                 break;
                             case 6:
 
@@ -332,10 +374,10 @@ namespace ListPractice
                                 secondList = SortList(secondList);
                                 break;
                             case 4:
-
+                                InsertElementAtIndex(secondList);
                                 break;
                             case 5:
-
+                                FindElement(secondList);
                                 break;
                             case 6:
 
