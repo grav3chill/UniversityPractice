@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Runtime.ExceptionServices;
 using System.Runtime.Serialization;
 
@@ -32,6 +33,7 @@ namespace ListPractice
             Console.WriteLine("5. Поиск элементов в списке");
             Console.WriteLine("6. Копирование списка в другой список");
             Console.WriteLine("7. Вывод элементов списка");
+            Console.WriteLine("8. Назад");
         }
         public static void AddElementsToList(List<object> list)
         {
@@ -45,7 +47,7 @@ namespace ListPractice
             while (true)
             {
                 var elementInput = Console.ReadLine();
-                if (string.IsNullOrEmpty(elementInput))
+                if (string.IsNullOrWhiteSpace(elementInput))
                     break;
                 list.Add(elementInput);
             }
@@ -268,6 +270,34 @@ namespace ListPractice
                 Console.WriteLine($"Элемент '{targetItem}' найден под индексами: {string.Join(", ", indices)}");
             }
         }
+        public static List<object> CopyListToAnotherList(List<object> list1, List<object> list2)
+        {
+            var mergedList = new List<object>();
+            Console.Clear();
+            Console.WriteLine("Выбери тип копирования:\n1. Копирование с дублированием элементов\n2. Копирование без дублирования элементов ");
+            if (!int.TryParse(Console.ReadLine(), out int choice))
+            {
+                Console.WriteLine("Ошибка ввода!");
+                return null;
+            }
+            
+            switch (choice)
+            {
+                case 1:
+                    mergedList = list1.Concat(list2).ToList();
+                    break;
+                case 2:
+                    mergedList = list1.Union(list2).ToList();
+                    break;
+
+                default:
+                    Console.WriteLine("Такого пункта нет!");
+                    return null;
+                   
+            }
+            Console.WriteLine("Копирование успешно!");
+            return mergedList;
+        }
         public static void OutputElementsOfList(List<object> list)
         {
             Console.Clear();
@@ -337,10 +367,14 @@ namespace ListPractice
                                 FindElement(firstList);
                                 break;
                             case 6:
-
+                                var resultList = CopyListToAnotherList(firstList, secondList);
+                                if (resultList != null)
+                                    secondList = resultList;
                                 break;
                             case 7:
                                 OutputElementsOfList(firstList);
+                                break;
+                            case 8:
                                 break;
 
                             default:
@@ -380,10 +414,14 @@ namespace ListPractice
                                 FindElement(secondList);
                                 break;
                             case 6:
-
+                                var resultList = CopyListToAnotherList(secondList, firstList);
+                                if (resultList != null)
+                                    firstList = resultList;
                                 break;
                             case 7:
                                 OutputElementsOfList(secondList);
+                                break;
+                            case 8:
                                 break;
 
                             default:
